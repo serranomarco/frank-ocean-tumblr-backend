@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
     text: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    postTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {});
   Text.associate = function (models) {

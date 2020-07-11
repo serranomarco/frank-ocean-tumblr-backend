@@ -33,21 +33,17 @@ router.post(
       userName,
       email,
       password,
-      profilePicPath,
     } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       userName,
       email,
       hashedPassword,
-      profilePicPath,
+      profilePicPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSVOp3hYOhOho5p9WvL1r4RuT4S-PUS5zFKtg&usqp=CAU'
     });
 
     const token = getUserToken(user);
-    res.status(201).json({
-      user: { id: user.id },
-      token,
-    });
+    res.status(201).json({ token, user: { id: user.id, userName: user.userName } });
   })
 );
 
@@ -81,7 +77,7 @@ router.post(
       return next(err);
     }
     const token = getUserToken(user);
-    res.json({ token, user: { id: user.id } });
+    res.json({ token, user: { id: user.id, userName: user.userName } });
   })
 );
 

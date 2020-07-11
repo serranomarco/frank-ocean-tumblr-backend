@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
     photoUrl: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    postTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {});
   Photo.associate = function (models) {

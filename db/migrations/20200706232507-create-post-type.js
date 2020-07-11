@@ -1,29 +1,17 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Quotes', {
+    return queryInterface.createTable('PostTypes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      postId: {
-        type: Sequelize.INTEGER,
+      postType: {
+        type: Sequelize.STRING(50),
         allowNull: false,
-        references: { model: 'Posts' }
-      },
-      quote: {
-        type: Sequelize.STRING(255),
-        allowNull: false
-      },
-      source: {
-        type: Sequelize.STRING(50)
-      },
-      postTypeId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'PostTypes' }
+        unique: true
       },
       createdAt: {
         allowNull: false,
@@ -36,6 +24,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Quotes');
+    return queryInterface.dropTable('PostTypes');
   }
 };

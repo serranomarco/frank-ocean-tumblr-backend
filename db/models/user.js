@@ -23,11 +23,10 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function (models) {
     // associations can be defined here
     User.hasMany(models.Post, {
-      as: "posts",
       foreignKey: "userId",
     });
     User.hasMany(models.Comment, {
-      foreignKey: "userId",
+      foreignKey: "commenterId",
     });
     User.hasMany(models.Like, {
       foreignKey: "userId",

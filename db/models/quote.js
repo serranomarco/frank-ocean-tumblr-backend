@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    source: DataTypes.STRING
+    source: DataTypes.STRING,
+    postTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   }, {});
   Quote.associate = function (models) {
     // associations can be defined here

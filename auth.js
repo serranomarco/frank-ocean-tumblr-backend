@@ -8,7 +8,7 @@ const { secret, expiresIn } = jwtConfig;
 const getUserToken = (user) => {
   const userDataForToken = {
     id: user.id,
-    email: user.email,
+    userName: user.userName,
   };
 
   const token = jwt.sign(

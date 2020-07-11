@@ -20,6 +20,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      postTypeId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'PostTypes' }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
