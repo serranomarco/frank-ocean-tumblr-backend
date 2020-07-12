@@ -59,9 +59,17 @@ router.get('/posts/:postId', asyncHandler(async (req, res, next) => {
     const postId = req.params.postId;
     const post = await db.Post.findByPk(postId, {
         attributes: [],
-        include: [{
-            model: db.Text
-        }]
+        include: [
+            {
+                model: db.Text
+            },
+            {
+                model: db.Photo
+            },
+            {
+                model: db.Quote
+            },
+        ]
     });
     if (post) {
         res.json({ post })
@@ -112,6 +120,23 @@ router.post('/posts/text', requireAuth, asyncHandler(async (req, res) => {
     res.json({ textPost })
 }));
 
+//make a quote post
+router.post('/posts/quote', requireAuth, asyncHandler(async (req, res) => {
+    const {
+        postId,
+        quote,
+        source,
+        postTypeId
+    } = req.body;
+    const quotePost = await db.Quote.create({
+        postId,
+        quote,
+        source,
+        postTypeId
+    });
+    res.json({ quotePost })
+}))
+
 router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (req, res, next) => {
     const userId = req.params.userId;
     const user = await db.User.findByPk(userId);
@@ -136,8 +161,7 @@ router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (re
                         order: [['createdAt', 'DESC']],
                         include: [
                             {
-                                model: db.Text,
-                                attributes: ['title', 'text']
+                                model: db.PostType,
                             },
                             {
                                 model: db.User,
@@ -167,7 +191,12 @@ router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (re
                     include: [
                         {
                             model: db.Text,
-                            attributes: ['title', 'text']
+                        },
+                        {
+                            model: db.Quote
+                        },
+                        {
+                            model: db.Photo
                         },
                         {
                             model: db.User,

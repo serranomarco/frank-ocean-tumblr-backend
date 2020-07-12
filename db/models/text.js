@@ -17,7 +17,16 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Text.associate = function (models) {
     // associations can be defined here
-    Text.belongsTo(models.Post, { foreignKey: 'postId' })
+    Text.belongsTo(models.Post, {
+      foreignKey: 'postId',
+    })
+    Text.belongsToMany(models.Post, {
+      through: 'PostTypes',
+      foreignKey: 'postTypeId',
+    })
+    Text.belongsTo(models.PostType, {
+      foreignKey: 'postTypeId'
+    })
   };
   return Text;
 };

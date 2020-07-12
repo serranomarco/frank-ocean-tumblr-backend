@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   PostType.associate = function (models) {
     // associations can be defined here
+    PostType.hasMany(models.Post, { foreignKey: 'postTypeId' })
+    PostType.hasMany(models.Text, { foreignKey: 'postTypeId' })
   };
   return PostType;
 };
