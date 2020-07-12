@@ -180,47 +180,41 @@ router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (re
                     as: 'following',
                     attributes: ['id', 'userName'],
                     through: { attributes: [] },
-                    include: {
-                        model: db.Post,
-                        order: [['createdAt', 'DESC']],
-                        include: [
-                            {
-                                model: db.Text,
-                            },
-                            {
-                                model: db.Quote
-                            },
-                            {
-                                model: db.Photo
-                            },
-                            {
-                                model: db.User,
-                                attributes: ['userName', 'profilePicPath']
-                            },
-                            {
-                                model: db.Comment,
-                                attributes: ['id', 'commenterId', 'comment', 'createdAt'],
-                                order: [['createdAt', 'DESC']],
-                                include: {
+                    include: [
+                        {
+                            model: db.Post,
+                            include: [
+                                {
+                                    model: db.Text
+                                },
+
+                                {
+                                    model: db.Quote
+                                },
+                                {
                                     model: db.User,
                                     attributes: ['userName', 'profilePicPath']
-                                }
-                            }, {
-                                model: db.Like,
-                                attributes: ['userId'],
-                                include: {
-                                    model: db.User,
-                                    attributes: ['userName', 'profilePicPath']
-                                }
-                            },
-                            {
-                                model: db.Like,
-                                where: {
-                                    userId: req.user.id,
-                                }
-                            }
-                        ],
-                    }
+                                },
+                                {
+                                    model: db.Comment,
+                                    attributes: ['id', 'commenterId', 'comment', 'createdAt'],
+                                    order: [['createdAt', 'DESC']],
+                                    include: {
+                                        model: db.User,
+                                        attributes: ['userName', 'profilePicPath']
+                                    }
+                                },
+                                {
+                                    model: db.Like,
+                                    attributes: ['userId'],
+                                    include: {
+                                        model: db.User,
+                                        attributes: ['userName', 'profilePicPath']
+                                    }
+                                },
+                            ]
+                        }
+                    ]
                 },
                 {
                     model: db.Post,
@@ -259,12 +253,19 @@ router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (re
             ],
         })
 
-        const followingPosts = followerPosts.dataValues.following.flatMap((following) => following.posts)
+        const followingPosts = followerPosts.dataValues.following.flatMap((following) => following.Posts)
         const userPosts = followerPosts.dataValues.Posts;
         followingPosts.push(...userPosts)
         const sortedPosts = followingPosts.sort((a, b) => b.createdAt - a.createdAt)
 
-        res.json({ sortedPosts });
+        const likedPosts = await db.Like.findAll({
+            where: {
+                userId
+            },
+            attributes: ['postId']
+        })
+
+        res.json({ sortedPosts, likedPosts });
     } else {
         next(userNotFound(userId));
     }
@@ -291,6 +292,15 @@ router.delete('/posts/:postId(\\d+)', requireAuth, asyncHandler(async (req, res,
 //delete a text post
 router.delete('/posts/:postId(\\d+)/text', requireAuth, asyncHandler(async (req, res, next) => {
     const postId = req.params.postId;
+    const post = await db.Post.findByPk(postId);
+    if (req.user.id !== post.userId) { //Checks if user is signed in and can edit their own tweet
+        const err = new Error('Unauthorized');
+        err.status = 401;
+        err.message = 'You are not authorized to delete this post.';
+        err.title = 'Unauthorized';
+        throw err
+    }
+
     const textPost = await db.Text.findOne({
         where: { postId }
     });
@@ -306,6 +316,14 @@ router.delete('/posts/:postId(\\d+)/text', requireAuth, asyncHandler(async (req,
 //delete a quote post
 router.delete('/posts/:postId(\\d+)/quote', requireAuth, asyncHandler(async (req, res, next) => {
     const postId = req.params.postId;
+    const post = await db.Post.findByPk(postId);
+    if (req.user.id !== post.userId) { //Checks if user is signed in and can edit their own tweet
+        const err = new Error('Unauthorized');
+        err.status = 401;
+        err.message = 'You are not authorized to delete this post.';
+        err.title = 'Unauthorized';
+        throw err
+    }
     const quotePost = await db.Quote.findOne({
         where: { postId }
     });
@@ -351,6 +369,12 @@ router.delete('/posts/:postId(\\d+)/like', requireAuth, asyncHandler(async (req,
         existingLike.destroy();
         res.json({ existingLike })
     }
+}))
+
+router.get('/quick/:userId', asyncHandler(async (req, res) => {
+    const userId = req.params.userId;
+    const post = await db.Post.findAll({ where: { userId } })
+    res.json({ post })
 }))
 
 module.exports = router;
