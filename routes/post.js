@@ -3,7 +3,10 @@ const { check } = require('express-validator');
 const { asyncHandler, handleValidationErrors } = require('../utils');
 const db = require('../db/models');
 const { requireAuth } = require('../auth');
+const upload = require('../services/image-upload');
 const { Op } = require('sequelize');
+
+const singleImageUpload = upload.single('image');
 
 const router = express.Router();
 
@@ -86,7 +89,7 @@ router.put('/posts/:postId/text', requireAuth, asyncHandler(async (req, res, nex
     if (req.user.id !== post.userId) { //Checks if user is signed in and can edit their own tweet
         const err = new Error('Unauthorized');
         err.status = 401;
-        err.message = 'You are not authorized to delete this post.';
+        err.message = 'You are not authorized to update this post.';
         err.title = 'Unauthorized';
         throw err
     }
@@ -109,7 +112,7 @@ router.put('/posts/:postId/quote', requireAuth, asyncHandler(async (req, res, ne
     if (req.user.id !== post.userId) { //Checks if user is signed in and can edit their own tweet
         const err = new Error('Unauthorized');
         err.status = 401;
-        err.message = 'You are not authorized to delete this post.';
+        err.message = 'You are not authorized to update this post.';
         err.title = 'Unauthorized';
         throw err
     }
@@ -158,7 +161,25 @@ router.post('/posts/quote', requireAuth, asyncHandler(async (req, res) => {
         postTypeId
     });
     res.json({ quotePost })
-}))
+}));
+
+//make a photo post
+router.post('/posts/photo', requireAuth, singleImageUpload, asyncHandler(async (req, res) => {
+    const {
+        postId,
+        caption,
+        postTypeId
+    } = req.body;
+
+    const photoPost = await db.Photo.create({
+        postId,
+        caption,
+        photoUrl: req.file.location,
+        postTypeId
+    });
+
+    return res.json({ photoPost });
+}));
 
 //get a users feed
 router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (req, res, next) => {
@@ -331,6 +352,29 @@ router.delete('/posts/:postId(\\d+)/quote', requireAuth, asyncHandler(async (req
     if (quotePost) {
         await quotePost.destroy();
         res.json({ quotePost });
+    } else {
+        next(postNotFound(postId))
+    }
+}));
+
+//delete a photo post
+router.delete('/posts/:postId(\\d+)/photo', requireAuth, asyncHandler(async (req, res, next) => {
+    const postId = req.params.postId;
+    const post = await db.Post.findByPk(postId);
+    if (req.user.id !== post.userId) { //Checks if user is signed in and can edit their own tweet
+        const err = new Error('Unauthorized');
+        err.status = 401;
+        err.message = 'You are not authorized to delete this post.';
+        err.title = 'Unauthorized';
+        throw err
+    }
+    const photoPost = await db.Photo.findOne({
+        where: { postId }
+    });
+
+    if (photoPost) {
+        await photoPost.destroy();
+        res.json({ photoPost });
     } else {
         next(postNotFound(postId))
     }
