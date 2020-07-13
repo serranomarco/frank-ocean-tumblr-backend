@@ -213,6 +213,9 @@ router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (re
                                     model: db.Quote
                                 },
                                 {
+                                    model: db.Photo
+                                },
+                                {
                                     model: db.User,
                                     attributes: ['userName', 'profilePicPath']
                                 },
