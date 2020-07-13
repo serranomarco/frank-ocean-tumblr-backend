@@ -18,7 +18,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        postId: 3,
+        postId: 4,
         title: 'Channel Orange',
         text: 'Channel Orange is the debut studio album by American R&B singer and songwriter Frank Ocean. It was released on July 10, 2012, by Def Jam Recordings.',
         postTypeId: 1,
@@ -26,7 +26,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        postId: 5,
+        postId: 7,
         title: 'Blonde',
         text: 'Blonde is the second studio album by American singer Frank Ocean. It was released on August 20, 2016, as a timed exclusive on the iTunes Store and Apple Music, and followed the August 19 release of Ocean\'s video album Endless',
         postTypeId: 1,
