@@ -9,12 +9,6 @@
 //     region: awsConfig.AWS_REGION,
 // });
 
-// aws.config.update({
-//     secretAccessKey: 'Njwwl3h4W6U7yXZ00yB+jRPlbOIbDWipmND2RGyc',
-//     accessKeyId: 'AKIAJNFIYCJQBFTVNC4Q',
-//     region: 'us-west-2'
-// });
-
 // const s3 = new aws.S3();
 
 // const fileFilter = (req, file, cb) => {
@@ -46,13 +40,9 @@ const multerS3 = require("multer-s3");
 const { awsConfig } = require('../config/index');
 
 aws.config.update({
-    secretAccessKey: 'Njwwl3h4W6U7yXZ00yB+jRPlbOIbDWipmND2RGyc',
-    accessKeyId: 'AKIAJNFIYCJQBFTVNC4Q',
     region: 'us-west-2'
 });
 
-//AKIAIC7SKBEG6CMMI53Q
-//4HVh8mMLpEuAye0MoQzFLuHgJQYWSs5i5qEzYlQm
 
 // aws.config.update({
 //   secretAccessKey: awsConfig.AWS_SECRET_ACCESS_KEY,
