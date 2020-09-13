@@ -276,7 +276,6 @@ router.get('/posts/following/:userId(\\d+)', requireAuth, asyncHandler(async (re
                 }
             ],
         })
-
         const followingPosts = followerPosts.dataValues.following.flatMap((following) => following.Posts)
         const userPosts = followerPosts.dataValues.Posts;
         followingPosts.push(...userPosts)
