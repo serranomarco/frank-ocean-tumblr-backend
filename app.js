@@ -10,7 +10,6 @@ const { environment } = require('./config');
 const app = express();
 
 app.use(cors());
-app.options('*', cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use('/', indexRouter);
