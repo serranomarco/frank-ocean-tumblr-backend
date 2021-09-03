@@ -11,5 +11,5 @@ db.sequelize.authenticate()
     })
     .catch((err) => {
         console.log('Database connection failure.');
-        console.error(err);s
+        console.error(err);
     });
