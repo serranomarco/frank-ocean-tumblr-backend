@@ -15,10 +15,11 @@ module.exports = {
   },
   production: {
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    },
-    dialect: 'postgres'
+    dialect: 'postgres',
+    ssl: true,
+    dialectOptions: {
+      ssl: true
+    }
   }
 
 };
